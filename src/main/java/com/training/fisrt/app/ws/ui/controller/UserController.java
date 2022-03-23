@@ -23,7 +23,7 @@ import com.training.fisrt.app.ws.ui.model.response.UserRest;
 @RequestMapping("/users")// http://localhost:8080/users/
 
 
-public class UserContrroller {
+public class UserController {
 	
 	@Autowired
 	UserService userService;
@@ -62,9 +62,22 @@ public class UserContrroller {
 		
 	}
 	
-	@PutMapping
-	public String updateUser() {
-		return "update user was called";
+	@PutMapping (path="/{id}",
+			consumes = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE},
+			produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
+	public UserRest  updateUser(@PathVariable String id,@RequestBody UserDetailsRequestModel userDetails)
+	
+	{
+		
+		UserRest  returnValue = new UserRest ();
+		
+		UserDto userDto = new UserDto();
+		BeanUtils.copyProperties(userDetails, userDto);
+		
+		UserDto updatedUser = userService.updateUser(id,userDto);
+		
+		BeanUtils.copyProperties(updatedUser, returnValue);
+		return returnValue;
 	}
 	
 	@DeleteMapping
